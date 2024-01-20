@@ -28,8 +28,7 @@ exports.up = function(knex) {
     }
   ).createTable(
     "message_master", (table)=>{
-        table.increments("id").unique().primary();
-        table.uuid("room_id").unique().notNullable();
+        table.uuid("room_id").unique().notNullable().primary();
         table.uuid("user_one").references("user.id");
         table.uuid("user_two").references("user.id");
     }
