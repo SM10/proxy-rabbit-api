@@ -24,8 +24,6 @@ exports.up = function(knex) {
         table.binary("hashed_password").notNullable();
         table.binary("salt").notNullable();
         table.integer("country_id").unsigned().notNullable().references("country.id").onUpdate("CASCADE").onDelete("CASCADE");
-        table.uuid("session_id").unique();
-        table.timestamp("session_last_act").defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
     }
   ).createTable(
     "message_master", (table)=>{

@@ -34,8 +34,7 @@ exports.seed = async function(knex) {
         last_name: user.last_name,
         hashed_password: crypto.pbkdf2Sync(user.password, salt, 31000, 32, 'sha256'),
         salt: salt,
-        country_id: countryData[user.country_id].id,
-        session_id: user.session_id
+        country_id: countryData[user.country_id].id
     }
   }));
   const room_id = uuid()

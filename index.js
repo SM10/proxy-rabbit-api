@@ -61,10 +61,9 @@ passport.serializeUser(function(user, cb) {
 
 app.use(session({
     secret: "keyboard cat",
-    cookie: {maxAge: 300000, secure:false},
+    cookie: {maxAge: 3600000, secure:false},
     store
 }))
-app.use(passport.initialize())
 app.use(passport.session())
 
 app.use('/api/login', loginRouter);

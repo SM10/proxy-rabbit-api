@@ -1,35 +1,28 @@
 const knex = require('knex')(require('../knexfile'));
 const {v4: uuidv4} = require('uuid')
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const crypto = require('crypto');
 
-function loadObject(object, key, value){
-    if(!value || value === '') throw new Error(`Missing ${key}. Please ensure all fields are filled`)
-    return {...object, [key]: value}
-}
-
-const registerUser = async (request, response)=>{
-    
-    const allUsers = await knex("user");
-    const existingUser = allUsers.find(user=>{
-        if(request.body && request.body.email && user.email === request.body.email) return user;
+const registerUser = (request, response)=>{
+    let salt = crypto.randomBytes(16);
+    crypto.pbkdf2(request.body.password, salt, 31000, 32, "sha256", async function (err, hashedPassword){
+        if(err) return next(err);
+        try{
+            console.log(request.body.email);
+        await knex("user").insert({
+            id: uuidv4(),
+            email: request.body.email,
+            first_name: request.body.first_name,
+            last_name: request.body.last_name,
+            hashed_password: hashedPassword,
+            country_id: request.body.country_id,
+            salt: salt
+        })
+        }catch(error){
+            return response.status(400).send(`Failed to register user. ${error.message}`)
+        }
+        response.status(201).send("Registration successful")
     })
-    if(existingUser){
-        response.status(409).send("User already exists")
-    }
-    try{
-        let newUser = {};
-        newUser = loadObject(newUser, "id", uuidv4())
-        newUser = loadObject(newUser, "email", request.body.email);
-        newUser = loadObject(newUser, "password", request.body.password);
-        newUser = loadObject(newUser, "first_name", request.body.first_name);
-        newUser = loadObject(newUser, "last_name", request.body.last_name);
-        newUser = loadObject(newUser, "country_id", request.body.country_id);
-        newUser = {...newUser, session_id: null}
-        console.log(newUser);
-        await knex("user").insert(newUser)
-        response.send(200)
-    }catch(error){
-        response.status(409).send(error.message)
-    }
 }
-
 module.exports = {registerUser}
