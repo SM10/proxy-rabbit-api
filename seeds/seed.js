@@ -3,6 +3,7 @@
  * @returns { Promise<void> } 
  */
 const {v4: uuid} = require('uuid')
+const crypto = require('crypto')
 
 let countryData = require('../seed-data/country')
 const productData = require('../seed-data/product')
@@ -25,12 +26,14 @@ exports.seed = async function(knex) {
     }
   }));
   await knex("user").insert(userData.map(user => {
+    const salt = crypto.randomBytes(16);
     return {
       id: user.id,
         email: user.email,
         first_name: user.first_name,
         last_name: user.last_name,
-        password: user.password,
+        hashed_password: crypto.pbkdf2Sync(user.password, salt, 31000, 32, 'sha256'),
+        salt: salt,
         country_id: countryData[user.country_id].id,
         session_id: user.session_id
     }

@@ -1,9 +1,31 @@
 const knex = require('knex')(require('../knexfile'))
 const {v4: uuidv4} = require('uuid')
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
+const crypto = require('crypto');
 
-const login = async (request, response) => {
-    const users = await knex("user").join("country", "user.country_id", "=", "country.id")
-        .select("user.id", "user.email", "user.password", "user.first_name", "user.last_name", "country.name", "user.session_id", "user.session_last_act");
+const login = async (request, response, next) => {
+    
+    passport.authenticate("local", function(err, user,info,status){
+        if (err) {return next(err)}
+        if(!user) {return response.status(409).send("User not found")}
+        request.logIn(user, function(err){
+            if (err) {return next(err)}
+            return response.status(200).send(`Login successful.`)
+        })
+    })(request, response, next)
+}
+
+/*app.get('/protected', function(req, res, next) {
+    passport.authenticate('local', function(err, user, info, status) {
+      if (err) { return next(err) }
+      if (!user) { return res.redirect('/signin') }
+      res.redirect('/account');
+    })(req, res, next);
+  });*/
+
+/*async (request, response) => {
+    
     console.log(users);
     const user = users.find((user) => {
         if (user.email === request.params.email){
@@ -34,6 +56,6 @@ const login = async (request, response) => {
         user_id: user.id,
         session_id: user.session_id,
     })
-}
+}*/
 
 module.exports = {login}
