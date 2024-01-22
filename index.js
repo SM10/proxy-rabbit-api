@@ -6,6 +6,7 @@ const registerRouter = require('./routes/register')
 const logoutRouter = require('./routes/logout')
 const countriesRouter = require('./routes/countries')
 const productsRouter = require('./routes/products')
+const messageRouter = require('./routes/message')
 require('dotenv').config()
 const {v4: uuid} = require('uuid')
 const logger = require('morgan');
@@ -48,7 +49,6 @@ passport.use(new LocalStrategy({usernameField: "email", passwordField: "password
 
 
 passport.serializeUser(function(user, cb) {
-    console.log(user);
     process.nextTick(function() {
       return cb(null, { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, country_id: user.country_id });
     });
@@ -73,6 +73,7 @@ app.use('/api/logout', logoutRouter)
 app.use('/api/register', registerRouter);
 app.use('/api/countries', countriesRouter);
 app.use('/api/products', productsRouter);
+app.use('/api/message', messageRouter);
 app.get("/api/test", (req, res, next) => {
    res.send(req.user);
 })

@@ -37,16 +37,38 @@ exports.seed = async function(knex) {
         country_id: countryData[user.country_id].id
     }
   }));
-  const room_id = uuid()
-  await knex("message_master").insert({
-    room_id: room_id,
+  const room_id1 = uuid()
+  const room_id2 = uuid()
+  const room_id3 = uuid()
+  await knex("message_master").insert([{
+    room_id: room_id1,
     user_one: userData[0].id,
     user_two: userData[1].id
-  })
-  await knex("messages").insert({
-    room_id: room_id,
+  },{
+    room_id: room_id2,
+    user_one: userData[2].id,
+    user_two: userData[1].id
+  },{
+    room_id: room_id3,
+    user_one: userData[0].id,
+    user_two: userData[2].id
+  }])
+  await knex("messages").insert([{
+    room_id: room_id1,
     from: userData[1].id,
     to: userData[0].id,
     message: "This is a seeded message"
-  })
+  },{
+    room_id: room_id2,
+    from: userData[2].id,
+    to: userData[1].id,
+    message: "This is a seeded message between index 1 and 2"
+  },
+    {
+      room_id: room_id3,
+      from: userData[0].id,
+      to: userData[2].id,
+      message: "This is a seeded message between index 0 and 2"
+    }]
+)
 };
