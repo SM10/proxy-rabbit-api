@@ -5,6 +5,7 @@ const loginRouter = require('./routes/login')
 const registerRouter = require('./routes/register')
 const logoutRouter = require('./routes/logout')
 const countriesRouter = require('./routes/countries')
+const productsRouter = require('./routes/products')
 require('dotenv').config()
 const {v4: uuid} = require('uuid')
 const logger = require('morgan');
@@ -71,6 +72,7 @@ app.use('/api/login', loginRouter);
 app.use('/api/logout', logoutRouter)
 app.use('/api/register', registerRouter);
 app.use('/api/countries', countriesRouter);
+app.use('/api/products', productsRouter);
 app.get("/api/test", (req, res, next) => {
    res.send(req.user);
 })
