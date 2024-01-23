@@ -2,6 +2,10 @@
 
 ## Overview
 
+Two repos are required for this project:
+https://github.com/SM10/proxy-rabbit
+https://github.com/SM10/proxy-rabbit-api
+
 Proxy Rabbit is a social media website aimed at connecting people around the world. It aims to provide a platform where people can freely ask and offer their local specialties and region-exclusive products to each other.
 
 ### Problem
@@ -16,8 +20,6 @@ Proxy Rabbit is planned to be aimed at young adults, and while a mobile version 
 
 ### Features
 
-List the functionality that your app will include. These can be written as user stories or descriptions with related details. Do not describe _how_ these features are implemented, only _what_ needs to be implemented.
-
 Proxy Rabbit will provide 2 ways to search for a proxy, or another user from that region who will help purchase and mail a desired product. The first is by country, and the second will be by popular products.
 
 Once the user has found a proxy, they can send them a message through Proxy Rabbit's built-in messenging system.
@@ -25,8 +27,6 @@ Once the user has found a proxy, they can send them a message through Proxy Rabb
 ## Implementation
 
 ### Tech Stack
-
-List technologies that will be used in your app, including any libraries to save time or provide more functionality. Be sure to research any potential limitations.
 
 Front End:
 React
@@ -57,8 +57,6 @@ The home page will be "Find a proxy by country". This will be a single page appl
 
 ### Mockups
 
-Provide visuals of your app's screens. You can use tools like Figma or pictures of hand-drawn sketches.
-
 Find a proxy by country:
 ![Find a proxy by country image](./src/assets/images/proxy-rabbit-home-page.jpg)
 
@@ -72,8 +70,6 @@ Mailbox page:
 ![Mailbox](./src/assets/images/proxy-rabbit-mailbox.jpg)
 
 ### Data
-
-Describe your data and the relationships between them. You can show this visually using diagrams, or write it out.
 
 The following tables will be implemented
 
@@ -111,8 +107,6 @@ timestamp
 Sessions. A sessions table as required by connect-session-knex dependency
 
 ### Endpoints
-
-List endpoints that your server will implement, including HTTP methods, parameters, and example responses. URLs are subject to change.
 
 This app is meant to be used in tandem with the following project:
 
