@@ -55,7 +55,6 @@ passport.serializeUser(function(user, cb) {
   });
   
   passport.deserializeUser(function(user, cb) {
-    console.log(user)
     process.nextTick(function() {
       return cb(null, user);
     });
@@ -73,6 +72,13 @@ app.use('/api/logout', logoutRouter)
 app.use('/api/register', registerRouter);
 app.use('/api/countries', countriesRouter);
 app.use('/api/products', productsRouter);
+
+app.use(function(req, res, next){
+    if(!req.user || !req.user.id){
+        res.status(404).send("User not logged in.")
+    }
+    next();
+})
 app.use('/api/message', messageRouter);
 app.get("/api/test", (req, res, next) => {
    res.send(req.user);
