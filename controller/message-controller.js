@@ -65,8 +65,6 @@ const postMessage = async(req, res)=>{
     const roomCheck = await knex("message_master").where("room_id", "=", req.body.room_id)
     let roomObject;
 
-    console.log(roomCheck.length)
-
     if(!req.body.room_id || roomCheck.length === 0){
         const secondCheck = await knex("message_master").where(function() {
             this.where(function(){
@@ -77,8 +75,6 @@ const postMessage = async(req, res)=>{
                     .andWhere("user_one", "=", req.body.recipient_id)
             })
         })
-
-        console.log(secondCheck);
 
         if(secondCheck.length > 0){
             roomObject = secondCheck[0];
@@ -101,8 +97,6 @@ const postMessage = async(req, res)=>{
 
         roomObject = roomCheck[0];
     }
-
-    console.log(roomObject.room_id)
 
     let idArray = await knex("messages").insert({
         room_id: roomObject.room_id,
