@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const controller = require('../controller/login-controller');
+const passport = require('passport');
+const morgan = require('morgan');
 
-router.route("/:email/:password").get(controller.login)
+router.route("/").post(controller.login)
 
 module.exports = router;

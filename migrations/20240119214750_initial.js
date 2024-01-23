@@ -21,10 +21,9 @@ exports.up = function(knex) {
         table.string("email").unique().notNullable();
         table.string("first_name").notNullable();
         table.string("last_name").notNullable();
-        table.string("password").notNullable();
+        table.binary("hashed_password").notNullable();
+        table.binary("salt").notNullable();
         table.integer("country_id").unsigned().notNullable().references("country.id").onUpdate("CASCADE").onDelete("CASCADE");
-        table.uuid("session_id").unique();
-        table.timestamp("session_last_act").defaultTo(knex.raw("CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"))
     }
   ).createTable(
     "message_master", (table)=>{
@@ -41,7 +40,11 @@ exports.up = function(knex) {
         table.string("message").notNullable();
         table.timestamp("timestamp").defaultTo(knex.raw("CURRENT_TIMESTAMP"))
     }
-  )
+  ).createTable("sessions", (table) => {
+    table.string("sid").notNullable().primary();
+    table.json("sess").notNullable();
+    table.datetime("expired").notNullable();
+  })
 };
 
 /**
@@ -53,6 +56,7 @@ exports.down = function(knex) {
     let schema = knex.schema;
 
   return schema
+    .dropTableIfExists("sessions")
     .dropTableIfExists("messages")
     .dropTableIfExists("message_master")
     .dropTableIfExists("user")
