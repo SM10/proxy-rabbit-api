@@ -9,11 +9,13 @@ module.exports = [
     {
         name: "Kraft Dinner",
         image_url: "http://localhost:8080/images/kraft-dinner.jpg",
-        country_id: 0
+        country_id: 0,
+        views: 5
     },{
         name: "187 Shirt",
         image_url: "http://localhost:8080/images/187-shirt.jpg",
-        country_id: 1
+        country_id: 1,
+        views: 4,
     },
     {
         name: "Lays Ketchup",
@@ -42,7 +44,8 @@ module.exports = [
     },{
         name: "Kangaroo Leather Jacket",
         image_url: "http://localhost:8080/images/rean-mccaul-kangaroo-leather-jacket.jpg",
-        country_id: 3
+        country_id: 3,
+        views: 2
     },{
         name: "Didgeridoo",
         image_url: "http://localhost:8080/images/didgeridoo.jpg",
