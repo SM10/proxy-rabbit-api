@@ -180,6 +180,39 @@ Returns a list of all products and their ids.
     country_name: country_name
 }
 
+GET http://localhost:8080/api/products/search/:search
+
+Returns a list of all products that start with the search parameter.
+
+{
+    id: product_id,
+    name: name,
+    country: country_id,
+    country_name: country_name
+}
+
+GET http://localhost:8080/api/products/popular
+
+Returns a list of the 9 items with the most views.
+
+{
+    id: product_id,
+    name: name,
+    country: country_id,
+    country_name: country_name
+}
+
+GET http://localhost:8080/api/products/discover
+
+Returns a list of 9 random items
+
+{
+    id: product_id,
+    name: name,
+    country: country_id,
+    country_name: country_name
+}
+
 GET http://localhost:8080/api/message
 
 Returns a list of all conversations that the user is a part of:
