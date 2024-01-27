@@ -22,7 +22,8 @@ exports.seed = async function(knex) {
     return {
       name : product.name,
       image_url: product.image_url,
-      country_id: countryData[product.country_id].id
+      country_id: countryData[product.country_id].id,
+      views: product.views
     }
   }));
   await knex("user").insert(userData.map(user => {
