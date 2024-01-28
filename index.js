@@ -17,11 +17,21 @@ const knex = require('knex')(require('./knexfile'))
 const session = require("express-session");
 const KnexSessionStore = require("connect-session-knex")(session)
 const PORT = process.env.PORT || 5000;
+const http = require('http');
+const server = http.createServer(app);
+const {Server} = require('socket.io');
+const io = new Server(server, {
+    cors: {
+        origin: process.env.CORS_ORIGIN,
+        methods: ["GET", "POST"],
+        credentials: true
+    }
+});
 
 app.use(express.static('./public'))
 
 const corsOptions= {
-    origin: "http://localhost:3000",
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
     "optionsSuccessStatus": 204
 }
@@ -65,6 +75,10 @@ passport.serializeUser(function(user, cb) {
     });
   });
 
+io.on("connection", (socket)=>{
+    console.log("a user connected")
+})
+
 app.use(session({
     secret: "keyboard cat",
     cookie: {maxAge: 3600000, secure:false},
@@ -90,6 +104,6 @@ app.get("/api/test", (req, res, next) => {
 })
 
 
-app.listen(PORT, ()=>{
+server.listen(PORT, ()=>{
     console.log(`Listening to port ${PORT}`)
 })
