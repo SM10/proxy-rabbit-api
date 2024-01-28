@@ -8,7 +8,7 @@ module.exports = [
     },
     {
         name: "Kraft Dinner",
-        image_url: "http://localhost:8080/images/kraft-dinner.jpg",
+        image_url: "http://localhost:8080/images/kraft-dinner.png",
         country_id: 0,
         views: 5
     },{
