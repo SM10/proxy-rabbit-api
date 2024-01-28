@@ -8,15 +8,21 @@ const getConvoList = async (req, res) => {
             .on("user_one.id", "=", "message_master.user_one")
     }).join("user as user_two", function(){
         this.on("user_two.id", "=", "message_master.user_two")
+    }).join("country as country_one", function(){
+        this.on("user_one.country_id", "=", "country_one.id")
+    }).join("country as country_two", function(){
+        this.on("user_two.country_id", "=", "country_two.id")
     }).select("message_master.room_id as room_id",
     "user_one.id as user_one_id",
     "user_one.first_name as user_one_first_name",
     "user_one.last_name as user_one_last_name",
     "user_one.email as user_one_email",
+    "country_one.name as user_one_country",
     "user_two.id as user_two_id",
     "user_two.first_name as user_two_first_name",
     "user_two.last_name as user_two_last_name",
-    "user_two.email as user_two_email"
+    "user_two.email as user_two_email",
+    "country_two.name as user_two_country",
     ).where(function(){
         this.where("user_two.id", "=", req.user.id)
             .orWhere("user_one.id", "=", req.user.id)
@@ -27,7 +33,8 @@ const getConvoList = async (req, res) => {
             room_id: room.room_id,
             recipient_id: req.user.id === room.user_one_id ? room.user_two_id : room.user_one_id,
             recipient_first_name: req.user.id === room.user_one_id ? room.user_two_first_name : room.user_one_first_name,
-            recipient_last_name: req.user.id === room.user_one_id ? room.user_two_last_name: room.user_one_last_name
+            recipient_last_name: req.user.id === room.user_one_id ? room.user_two_last_name: room.user_one_last_name,
+            recipient_country_name: req.user.id === room.user_one_id ? room.user_two_country: room.user_one_country
         }
     })
 
