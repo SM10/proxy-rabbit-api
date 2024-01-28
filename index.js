@@ -20,8 +20,12 @@ const PORT = process.env.PORT || 5000;
 
 app.use(express.static('./public'))
 
-
-app.use(cors());
+const corsOption ={
+    origin: "http://localhost:3000",
+    credentials: true,
+    optionsSuccessStatus: 200
+}
+app.use(cors(corsOption));
 app.use(express.json());
 const store = new KnexSessionStore({knex});
 

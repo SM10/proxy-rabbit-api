@@ -24,4 +24,15 @@ const login = async (request, response, next) => {
     })(request, response, next)
 }
 
-module.exports = {login}
+const relogin = async(req, res, next) => {
+    if(req.user){
+        userData = await knex("user").join("country", "user.country_id", "=", "country.id")
+                        .select("user.id as user_id", "user.email as email", "user.first_name as first_name", "user.last_name as last_name", "user.country_id as country_id", "country.name as country_name")
+                        .where("user.id", "=", req.user.id)
+        res.status(200).json(userData[0])
+    }else{
+        res.status(409).send("User not logged in.")
+    }
+}
+
+module.exports = {login, relogin}
