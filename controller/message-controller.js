@@ -71,14 +71,14 @@ const postMessage = async(req, res)=>{
     try{
     const roomCheck = await knex("message_master").where("room_id", "=", req.body.room_id)
     let roomObject;
-
+    const id = req.user.id;
     if(!req.body.room_id || roomCheck.length === 0){
         const secondCheck = await knex("message_master").where(function() {
             this.where(function(){
-                this.where("user_one", "=", req.user.id)
+                this.where("user_one", "=", id)
                     .andWhere("user_two", "=", req.body.recipient_id)
             }).orWhere(function(){
-                this.where("user_two", "=", req.user.id)
+                this.where("user_two", "=", id)
                     .andWhere("user_one", "=", req.body.recipient_id)
             })
         })
@@ -90,16 +90,15 @@ const postMessage = async(req, res)=>{
 
             roomObject = {
                 room_id: newRoomId,
-                user_one: req.user.id,
+                user_one: id,
                 user_two: req.body.recipient_id
             }
             await knex("message_master").insert(roomObject)
         }
     }else{
 
-        if(req.user.id !== roomCheck[0].user_one && req.user.id !== roomCheck[0].user_two){
+        if(id !== roomCheck[0].user_one && id !== roomCheck[0].user_two){
             response.status(403).send("User may not access this page")
-            return
         }
 
         roomObject = roomCheck[0];
@@ -107,7 +106,7 @@ const postMessage = async(req, res)=>{
 
     let idArray = await knex("messages").insert({
         room_id: roomObject.room_id,
-        from: req.user.id,
+        from: id,
         to: req.body.recipient_id,
         message: req.body.message
     })
@@ -128,10 +127,9 @@ const postMessage = async(req, res)=>{
     "messages.timestamp AS timestamp");
 
     res.status(202).send(postedMessage);
-
-    }catch(error){
-        res.status(400).send(error)
-    }
+}catch(error){
+    res.status(402).send(error)
+}
 }
 
 module.exports = 
