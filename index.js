@@ -21,8 +21,9 @@ const PORT = process.env.PORT || 5000;
 app.use(express.static('./public'))
 
 const corsOptions= {
-    origin: process.env.CORS_ORIGIN,
-    credentials: true
+    origin: "http://localhost:3000",
+    credentials: true,
+    "optionsSuccessStatus": 204
 }
 
 app.use(cors(corsOptions));
