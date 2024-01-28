@@ -83,7 +83,6 @@ io.on("connection", (client)=>{
             .orWhere("message_master.user_two", "=", user.user_id  )
         })
         userRooms.forEach(room => {
-            console.log(`Joined Room: ${room.room_id}`)
             client.join(room.room_id)
         })
     })
