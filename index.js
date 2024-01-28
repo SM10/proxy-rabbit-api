@@ -75,8 +75,18 @@ passport.serializeUser(function(user, cb) {
     });
   });
 
-io.on("connection", (socket)=>{
-    console.log("a user connected")
+io.on("connection", (client)=>{
+    client.on("data", async function(user){
+        client.data.user = user;
+        const userRooms = await knex("message_master").where(function(){
+            this.where("message_master.user_one", "=", user.user_id )
+            .orWhere("message_master.user_two", "=", user.user_id  )
+        })
+        userRooms.forEach(room => {
+            console.log(`Joined Room: ${room.room_id}`)
+            client.join(room.room_id)
+        })
+    })
 })
 
 app.use(session({
@@ -96,12 +106,14 @@ app.use(function(req, res, next){
     if(!req.user || !req.user.id){
         res.status(404).send("User not logged in.")
     }
+    req.io = io;
     next();
 })
 app.use('/api/message', messageRouter);
 app.get("/api/test", (req, res, next) => {
    res.send(req.user);
 })
+
 
 
 server.listen(PORT, ()=>{
