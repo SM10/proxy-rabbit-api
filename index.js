@@ -96,7 +96,7 @@ io.on("connection", (client)=>{
 
 app.use(session({
     secret: "keyboard cat",
-    cookie: {maxAge: 3600000, secure:false},
+    cookie: {maxAge: 3600000, secure:false, sameSite: "none"},
     store
 }))
 app.use(passport.session())
