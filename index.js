@@ -20,6 +20,7 @@ const PORT = process.env.PORT || 5000;
 const http = require('http');
 const server = http.createServer(app);
 const {Server} = require('socket.io');
+const path = require('path')
 const io = new Server(server, {
     cors: {
         origin: process.env.CORS_ORIGIN,
@@ -28,7 +29,7 @@ const io = new Server(server, {
     }
 });
 
-app.use(express.static('./public'))
+app.use(express.static(path.join(__dirname, 'public')))
 
 const corsOptions= {
     origin: process.env.CORS_ORIGIN,
