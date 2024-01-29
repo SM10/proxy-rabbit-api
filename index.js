@@ -96,7 +96,7 @@ io.on("connection", (client)=>{
 
 app.use(session({
     secret: "keyboard cat",
-    cookie: {maxAge: 3600000, secure:false, sameSite: "none"},
+    cookie: {maxAge: 3600000, secure:false},
     store
 }))
 app.use(passport.session())
@@ -108,7 +108,7 @@ app.use('/api/countries', countriesRouter);
 app.use('/api/products', productsRouter);
 
 app.use(function(req, res, next){
-    console.log(req.headers)
+    console.log(req.user);
     if(!req.user || !req.user.id){
         res.status(404).send("User not logged in.")
     }else{
