@@ -8,6 +8,7 @@ const getProducts = async (_req, res)=>{
     }catch(error){
         res.status(400).send(error)
     }
+    
 }
 
 const searchProducts = async (req, res)=>{
@@ -18,6 +19,7 @@ const searchProducts = async (req, res)=>{
     }catch(error){
         res.status(400).send(error)
     }
+    
 }
 
 const discoverProducts = async (req, res) =>{
@@ -37,13 +39,13 @@ const discoverProducts = async (req, res) =>{
     }catch(error){
         res.status(400).send(error)
     }
+    
 }
 
 const popularProducts = async (req, res)=>{
     try{
         let products = await knex("product").join("country", "product.country_id", "=", "country.id")
         .select("product.id as id", "product.image_url as image_url", "product.name as name", "country.id as country_id", "country.name as country_name").orderBy("product.views", "desc").limit(9)
-        console.log(products);
         if(products.length <= 9) res.status(200).send(products);
         else{
             const returnArray = products.splice(0, 9);
@@ -52,6 +54,7 @@ const popularProducts = async (req, res)=>{
     }catch(error){
         res.status(400).send(error)
     }
+    
 }
 
 module.exports = {getProducts, searchProducts, discoverProducts, popularProducts}
