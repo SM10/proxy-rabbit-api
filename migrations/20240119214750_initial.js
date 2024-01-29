@@ -40,11 +40,11 @@ exports.up = function(knex) {
         table.string("message").notNullable();
         table.timestamp("timestamp").defaultTo(knex.raw("CURRENT_TIMESTAMP"))
     }
-  ).createTable("sessions", (table) => {
+  )/*.createTable("sessions", (table) => {
     table.string("sid").notNullable().primary();
     table.json("sess").notNullable();
     table.datetime("expired").notNullable();
-  })
+  })*/
 };
 
 /**
