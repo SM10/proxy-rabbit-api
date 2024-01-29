@@ -108,6 +108,7 @@ app.use('/api/countries', countriesRouter);
 app.use('/api/products', productsRouter);
 
 app.use(function(req, res, next){
+    console.log(req.headers)
     if(!req.user || !req.user.id){
         res.status(404).send("User not logged in.")
     }else{
