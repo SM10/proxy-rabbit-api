@@ -24,7 +24,8 @@ const io = new Server(server, {
     cors: {
         origin: process.env.CORS_ORIGIN,
         methods: ["GET", "POST"],
-        credentials: true
+        credentials: true,
+        exposedHeaders: ["set-cookie"]
     }
 });
 
@@ -33,7 +34,8 @@ app.use(express.static('./public'))
 const corsOptions= {
     origin: process.env.CORS_ORIGIN,
     credentials: true,
-    "optionsSuccessStatus": 204
+    "optionsSuccessStatus": 204,
+    exposedHeaders: ["set-cookie"]
 }
 
 app.use(cors(corsOptions));
@@ -96,8 +98,7 @@ io.on("connection", (client)=>{
 
 app.use(session({
     secret: "keyboard cat",
-    cookie: {maxAge: 3600000, secure:false, sameSite: "none"},
-    proxy: true,
+    cookie: {maxAge: 3600000, secure:false},
     store
 }))
 app.use(passport.session())
