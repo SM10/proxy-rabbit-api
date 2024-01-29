@@ -9,7 +9,6 @@ const registerUser = (request, response)=>{
     crypto.pbkdf2(request.body.password, salt, 31000, 32, "sha256", async function (err, hashedPassword){
         if(err) return next(err);
         try{
-            console.log(request.body.email);
         await knex("user").insert({
             id: uuidv4(),
             email: request.body.email,

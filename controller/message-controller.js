@@ -3,7 +3,8 @@ const {v4: uuid} = require('uuid')
 
 
 const getConvoList = async (req, res) => {
-
+    if(!req.user || !req.user.id){res.status(404).send("List of messages not found");}
+    else{
     const userRooms = await knex("user as user_one").join("message_master", function(){
         this
             .on("user_one.id", "=", "message_master.user_one")
@@ -40,10 +41,11 @@ const getConvoList = async (req, res) => {
     })
 
     res.status(200).send(returnList)
+    }
 }
 
 const getConvo = async(req,res)=>{
-
+    try{
     const roomCheck = await knex("message_master").where("room_id", "=", req.params.roomId)
 
     if(roomCheck.length === 0){res.status(404).send("Conversation not found")}
@@ -66,6 +68,10 @@ const getConvo = async(req,res)=>{
         "messages.timestamp AS timestamp").orderBy("timestamp", "desc")
     
         res.status(200).send(convoHistory)
+    }catch(error){
+        res.status(409).send("Failed to get list")
+    }
+    
 }
 
 module.exports = 

@@ -77,6 +77,7 @@ passport.serializeUser(function(user, cb) {
 
 io.on("connection", (client)=>{
     client.on("data", async function(user){
+        try{
         client.data.user = user;
         const userRooms = await knex("message_master").where(function(){
             this.where("message_master.user_one", "=", user.user_id )
@@ -85,6 +86,9 @@ io.on("connection", (client)=>{
         userRooms.forEach(room => {
             client.join(room.room_id)
         })
+    }catch(error){
+        console.log("Failed to put client in room");
+    }
     })
 })
 
@@ -104,9 +108,10 @@ app.use('/api/products', productsRouter);
 app.use(function(req, res, next){
     if(!req.user || !req.user.id){
         res.status(404).send("User not logged in.")
-    }
+    }else{
     req.io = io;
     next();
+    }
 })
 app.use('/api/message', messageRouter);
 app.get("/api/test", (req, res, next) => {
