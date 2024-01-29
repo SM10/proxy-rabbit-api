@@ -6,7 +6,7 @@ const {v4: uuid} = require('uuid')
 router.route('/').get(controller.getConvoList)
     .post(async(req, res)=>{
         try{
-            let roomCheck;
+            let roomCheck = [];
         if(req.body.room_id){roomCheck = await knex("message_master").where("room_id", "=", req.body.room_id)}
         let roomObject;
         const id = req.user.id;
