@@ -65,11 +65,13 @@ passport.use(new LocalStrategy({usernameField: "email", passwordField: "password
 
 passport.serializeUser(function(user, cb) {
     process.nextTick(function() {
+        console.log("Serialized user");
       return cb(null, { id: user.id, email: user.email, first_name: user.first_name, last_name: user.last_name, country_id: user.country_id });
     });
   });
   
   passport.deserializeUser(function(user, cb) {
+    console.log(`deserialized user: ${user.first_name}`)
     process.nextTick(function() {
       return cb(null, user);
     });
