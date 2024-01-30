@@ -97,8 +97,12 @@ io.on("connection", (client)=>{
 })
 
 app.use(session({
-    secret: "keyboard cat",
-    cookie: {maxAge: 3600000, secure:false},
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: false,
+    cookie: {maxAge: 3600000,
+        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
+         secure:process.env.NODE_ENV === "production"},
     store
 }))
 app.use(passport.session())
