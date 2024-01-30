@@ -98,11 +98,7 @@ io.on("connection", (client)=>{
 
 app.use(session({
     secret: process.env.SESSION_SECRET,
-    resave: true,
-    saveUninitialized: false,
-    cookie: {maxAge: 3600000,
-        sameSite: process.env.NODE_ENV === "production" ? 'none' : 'lax',
-         secure:process.env.NODE_ENV === "production"},
+    cookie: {maxAge: 3600000, secure:false},
     store
 }))
 app.use(passport.session())
