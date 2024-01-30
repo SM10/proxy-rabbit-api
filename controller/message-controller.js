@@ -3,7 +3,7 @@ const {v4: uuid} = require('uuid')
 
 
 const getConvoList = async (req, res) => {
-    if(!req.user || !req.user.id){res.status(404).send("List of messages not found");}
+    if(!req.user || !req.user.user_id){res.status(404).send("List of messages not found");}
     else{
     const userRooms = await knex("user as user_one").join("message_master", function(){
         this
@@ -26,17 +26,17 @@ const getConvoList = async (req, res) => {
     "user_two.email as user_two_email",
     "country_two.name as user_two_country",
     ).where(function(){
-        this.where("user_two.id", "=", req.user.id)
-            .orWhere("user_one.id", "=", req.user.id)
+        this.where("user_two.id", "=", req.user.user_id)
+            .orWhere("user_one.id", "=", req.user.user_id)
     })
 
     let returnList = userRooms.map(room => {
         return {
             room_id: room.room_id,
-            recipient_id: req.user.id === room.user_one_id ? room.user_two_id : room.user_one_id,
-            recipient_first_name: req.user.id === room.user_one_id ? room.user_two_first_name : room.user_one_first_name,
-            recipient_last_name: req.user.id === room.user_one_id ? room.user_two_last_name: room.user_one_last_name,
-            recipient_country_name: req.user.id === room.user_one_id ? room.user_two_country: room.user_one_country
+            recipient_id: req.user.user_id === room.user_one_id ? room.user_two_id : room.user_one_id,
+            recipient_first_name: req.user.user_id === room.user_one_id ? room.user_two_first_name : room.user_one_first_name,
+            recipient_last_name: req.user.user_id === room.user_one_id ? room.user_two_last_name: room.user_one_last_name,
+            recipient_country_name: req.user.user_id === room.user_one_id ? room.user_two_country: room.user_one_country
         }
     })
 
@@ -50,7 +50,7 @@ const getConvo = async(req,res)=>{
 
     if(roomCheck.length === 0){res.status(404).send("Conversation not found")}
 
-    if(req.user.id !== roomCheck[0].user_one && req.user.id !== roomCheck[0].user_two){res.status(403).send("User may not access this page")}
+    if(req.user.user_id !== roomCheck[0].user_one && req.user.user_id !== roomCheck[0].user_two){res.status(403).send("User may not access this page")}
 
     const convoHistory = await knex("messages").where("room_id", "=", roomCheck[0].room_id)
         .join("user as from", function(){
