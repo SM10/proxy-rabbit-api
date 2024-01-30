@@ -1,12 +1,10 @@
 const router = require('express').Router();
 const passport = require('passport');
 const morgan = require('morgan');
+const jwt = require('jsonwebtoken')
 
 router.post('/', function(req, res, next) {
-    req.logout(function(err) {
-      if (err) { return next(err); }
-      res.status(200).send()
-    });
+  res.status(200).send()
   });
 
 module.exports = router;
