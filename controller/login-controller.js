@@ -1,7 +1,5 @@
 const knex = require('knex')(require('../knexfile'))
 const {v4: uuidv4} = require('uuid')
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
 require('dotenv').config();
 const crypto = require('crypto');
 const jwt = require("jsonwebtoken")

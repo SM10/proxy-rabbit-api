@@ -20,4 +20,16 @@ const getCountriesUsers = async (request,response)=>{
     response.status(200).json(users);
 }
 
-module.exports = {getCountries, getCountriesProducts, getCountriesUsers}
+const changeCountries = async (request, response)=>{
+    //try{
+        await knex("user").where("id", "=", request.body.id).update({country_id: request.body.country_id})
+        const userData = await knex("user").join("country", "user.country_id", "=", "country.id")
+                        .select("user.id as user_id", "user.email as email", "user.first_name as first_name", "user.last_name as last_name", "user.country_id as country_id", "country.name as country_name")
+                        .where("user.id", "=", request.body.id);
+        response.status(200).json(userData[0])
+    //}catch(error){
+    //    response.status(400).send(error.message)
+    //}
+}
+
+module.exports = {getCountries, getCountriesProducts, getCountriesUsers, changeCountries}
