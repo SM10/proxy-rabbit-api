@@ -1,6 +1,6 @@
 const {v4: uuid} = require("uuid")
 module.exports = [
-    {
+    /*{
         id: uuid(),
         email: "stephenman88@gmail.com",
         first_name: "Stephen",
@@ -8,7 +8,7 @@ module.exports = [
         password: "L3mming$",
         country_id: 0
         
-    },
+    },*/
     {
         id: uuid(),
         email: "cteevun88@gmail.com",
