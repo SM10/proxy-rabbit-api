@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const passport = require('passport');
 const morgan = require('morgan');
 const jwt = require('jsonwebtoken')
 
