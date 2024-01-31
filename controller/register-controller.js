@@ -1,7 +1,5 @@
 const knex = require('knex')(require('../knexfile'));
 const {v4: uuidv4} = require('uuid')
-const passport = require('passport');
-const LocalStrategy = require('passport-local');
 const crypto = require('crypto');
 
 const registerUser = (request, response)=>{
@@ -17,11 +15,12 @@ const registerUser = (request, response)=>{
             hashed_password: hashedPassword,
             country_id: request.body.country_id,
             salt: salt
-        })
+        });
+        response.status(201).send("Registration successful")
         }catch(error){
             return response.status(400).send(`Failed to register user. ${error.message}`)
         }
-        response.status(201).send("Registration successful")
+        
     })
 }
 module.exports = {registerUser}

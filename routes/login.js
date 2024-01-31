@@ -1,13 +1,72 @@
 const router = require('express').Router();
 const controller = require('../controller/login-controller');
-const passport = require('passport');
+const knex = require("knex")(require("../knexfile"))
+const jwt = require('jsonwebtoken')
 const morgan = require('morgan');
+const {google} = require("googleapis");
 require('dotenv').config()
+const {v4: uuidv4} = require('uuid')
+const crypto = require('crypto');
+const querystring = require('querystring')
 
 router.route("/").post(controller.login)
-router.route("/google").post((req, res, next) => {
-    const country = req.body.country_id
-    res.redirect(`https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?state=${country}redirect_uri=${process.env.GOOGLE_CALLBACK_URL}/redirect&prompt=consent&response_type=token&client_id=${process.env.GOOGLE_CLIENT_ID}&scope=address https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/user.addresses.read https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile&access_type=offline&service=lso&o2v=2&theme=glif&flowName=GeneralOAuthFlow`)
+
+const client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, process.env.GOOGLE_CALLBACK_URL);
+const scope = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email']
+
+router.route("/google").get((req, res, next) => {
+    const url = client.generateAuthUrl({
+        access_type: "offline",
+        scope: scope,
+        include_granted_scopes: true
+    })
+    res.status(200).send(url);
+})
+
+router.route("/google/callback").get(async (req, res) =>{
+    const {code} = req.query;
+    try{
+        console.log(code);
+        const {tokens} = await client.getToken(code);
+        client.setCredentials(tokens)
+        const userProfile = google.oauth2("v2")
+        userProfile.userinfo.get({
+            auth: client,
+        }, 
+        async (error, response) =>{
+            const email = response.data.email
+            const userData = await knex("user").join("country", "user.country_id", "=", "country.id")
+                        .select("user.id as user_id", "user.email as email", "user.first_name as first_name", "user.last_name as last_name", "user.country_id as country_id", "country.name as country_name")
+                        .where("user.email", "=", email)
+            if(userData.length > 0){
+                let token = jwt.sign({user_id: userData[0].user_id}, process.env.SESSION_SECRET)
+                res.status(200).redirect(`${process.env.PROXY_RABBIT_FRONTEND}/LoginSuccess?${querystring.stringify({...userData[0], token: token})}`)
+            }else{
+                const countries = await knex("countries")
+                let salt = crypto.randomBytes(16);
+                crypto.pbkdf2(uuidv4(), salt, 31000, 32, "sha256", async function (err, hashedPassword){
+                    if(err) return next(err);
+                    try{
+                        await knex("user").insert({
+                            id: uuidv4(),
+                            email: response.data.email,
+                            first_name: response.data.given_name,
+                            last_name: response.data.family_name,
+                            hashed_password: hashedPassword,
+                            country_id: countries[0].id,
+                            salt: salt
+                        });
+                        let token = jwt.sign({user_id: userData[0].user_id}, process.env.SESSION_SECRET)
+                        res.status(200).redirect(`${process.env.PROXY_RABBIT_FRONTEND}/LoginSuccess?${querystring.stringify({...userData[0], token: token})}`)
+                    }catch(error){
+                        return res.status(400).redirect(`${process.env.PROXY_RABBIT_FRONTEND}/Register`)
+                    }
+                })
+            }
+        })
+    }catch(error){
+        res.status(400).redirect(`${process.env.PROXY_RABBIT_FRONTEND}/Register`)
+    }
 })
 
 module.exports = router;
