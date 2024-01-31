@@ -1,5 +1,4 @@
 const knex = require('knex')(require('../knexfile'))
-const {v4: uuid} = require('uuid')
 
 
 const getConvoList = async (req, res) => {
@@ -40,7 +39,7 @@ const getConvoList = async (req, res) => {
         }
     })
 
-    res.status(200).send(returnList)
+    res.status(200).json(returnList)
     }
 }
 

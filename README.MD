@@ -31,57 +31,51 @@ Once the user has found a proxy, they can send them a message through Proxy Rabb
 Front End:
 React
 SASS
+Socket.IO
+Axios
+js-cookie
 
 Back End:
 Node.js
 Express
+Express Session
 MySQL
 Knex
 Nodemon
 Socket.IO
-Passport.js
+JSON Web Token
+Google Apis (OAuth 2.0)
+Crypto
+Dotenv
 
 ### APIs
 
-No external APIs will be used for this app.
-
-### Sitemap
-
-The following pages will be necessary:
-
-"Find a proxy by country"
-"Find a proxy by product"
-"Mailbox"
-
-The home page will be "Find a proxy by country". This will be a single page application. There is a navigation bar that allows the user to switch between any of the 3 pages on demand.
-
-### Mockups
-
-Find a proxy by country:
-![Find a proxy by country image](./src/assets/images/proxy-rabbit-home-page.jpg)
-
-Find a proxy by product:
-![Find a proxy by product image](./src/assets/images/proxy-rabbit-by-product.jpg)
-
-Login page:
-![Login image](./src/assets/images/proxy-rabbit-login.jpg)
-
-Mailbox page:
-![Mailbox](./src/assets/images/proxy-rabbit-mailbox.jpg)
+This is the back end for the Proxy Rabbit project. The front end can be found here: https://github.com/SM10/proxy-rabbit
 
 ### Data
 
 The following tables will be implemented
 
 Country table with the following columns:
-id
-name
+
+| Column  | Description |
+| ------------- | ------------- |
+| id  | Identifier code for the country.  |
+| name  | Country name  |
 
 Products table:
 id
 name
 image_url
 country_id (foreign key mapped to country table)
+
+| Column  | Description |
+| ------------- | ------------- |
+| id  | Identifier code for the product  |
+| name  | name of the product |
+| image_url  | url to the picture |
+| country_id  | references 'id' column from 'country' table |
+| views  | tracks how many times each product has been clicked on |
 
 User table:
 id
@@ -91,10 +85,26 @@ last_name
 password
 country_id (foreign key mapped to country table)
 
+| Column  | Description |
+| ------------- | ------------- |
+| id  | Identifier code for the user  |
+| email  | User's email, which also serves as their username  |
+| first_name  | user's first name |
+| last_name  | user's last name |
+| hashed_password  | hashed password that has been encrypted using the salt below as a SHA256 code |
+| salt  | 16 random bytes associated with the user |
+| country_id  | references the country table's id. |
+
 Message Master table. This table will manage all the tables related to messages:
 room_id (primary key)
 user_one (foreign key mapped to user table)
 user_two (foreign key mapped to user table)
+
+| Column  | Description |
+| ------------- | ------------- |
+| room_id  | Rooms to put users in when they send each other messages. Primary Key  |
+| user_one  | First user's id. Foreign key that references 'user' table  |
+| user_two  | Second user's id. Foreign key that references 'user' table  |
 
 Message Table Sample. A new table will be generated each time a user messages someone they have not messaged before.
 id
@@ -104,7 +114,14 @@ to (foreign key mapped to user.id on user table)
 message
 timestamp
 
-Sessions. A sessions table as required by connect-session-knex dependency
+| Column  | Description |
+| ------------- | ------------- |
+| id  | The message's id. Primary key.  |
+| room_id  | room associated with the message. References message master table |
+| from | Sender's user id. Foreign key that references 'user; table |
+| to | Recipient's user's id. Foreign key that references 'user' table |
+| message | contents of the message |
+| timestampt | timestamp that the message was received by the server |
 
 ### Endpoints
 
@@ -118,20 +135,25 @@ POST http://localhost:8080/api/login/
 
 Requires the following body:
 
-{
-    email: email,
-    password: password
-}
+| Key | Value |
+| ------------- | ------------- |
+| email | Email of the user |
+| password | User's password |
 
 returns the following if email and password are correct:
 
-{
-    email: email,
-    first_name: first_name,
-    last_name: last_name,
-    country: country_name,
-    user_id: user_id
-}
+| Key | Value |
+| ------------- | ------------- |
+| user_id | Return's user's id |
+| email | User's email |
+| first_name | User's first name |
+| last_name | User's last name |
+| country_id | Country id of the user's selected country |
+| country_name | Country name of the user's selected country |
+
+POST http://localhost:8080/api/login/google
+
+Redirects the user to google's authentication page or directly logs them in.
 
 POST htpp://localhost:8080/api/logout
 
@@ -141,136 +163,172 @@ POST http://localhost:8080/api/register
 
 Verifies that the current email doesn't exist and creates a new one if it doesn't. Returns a 409 error code upon failure. Requires the following body. Returns a 201 response code only.
 
-{
-    email: email
-    password: password
-    first_name: first_name
-    last_name: last_name
-    country_id: country_id
-}
+| Key | Value |
+| ------------- | ------------- |
+| email | User's email |
+| first_name | User's first name |
+| last_name | User's last name |
+| country_id | Country id of the user's selected country |
 
 GET http://localhost:8080/api/countries
 
 Returns a list of countries and their ids.
 
-[{
-    id: country_id,
-    name: country_name
-}]
+| Key | Value |
+| ------------- | ------------- |
+| id | Country's identifier. Primary key |
+| name | Country's name |
 
 GET http://localhost:8080/api/countries/:countryId/products
 
 Returns a list of all products with a country id that matches the country id.
 
-{
-    id: product_id,
-    name: name,
-    country: country_id,
-    country_name: country_name
-}
+| Key | Value |
+| ------------- | ------------- |
+| id | Product's id |
+| name | Product's name |
+| image_url | Product's picture |
+| country_id | Country id of that the product is sold in |
+| country_name | Name of country that the product is sold in |
+
+GET http://localhost:8080/api/countries/:countryId/users
+
+Returns a list of all users with a country id that matches the parameter country id.
+
+| Key | Value |
+| ------------- | ------------- |
+| id | Return's user's id |
+| first_name | User's first name |
+| last_name | User's last name |
+| country_id | Country id of the user's selected country |
+| country_name | Country name of the user's selected country |
+
+PATCH http://localhost:8080/api/countries/change-country
+
+Changes the country of the current user. Accepts the following as body:
+
+| Key | Value |
+| ------------- | ------------- |
+| user_id | The user whose country needs to be changed |
+| country_id | The user's new country |
+
+Returns the following:
+
+| Key | Value |
+| ------------- | ------------- |
+| user_id | Return's user's id |
+| email | User's email |
+| first_name | User's first name |
+| last_name | User's last name |
+| country_id | Country id of the user's selected country |
+| country_name | Country name of the user's selected country |
 
 GET http://localhost:8080/api/products
 
 Returns a list of all products and their ids.
 
-{
-    id: product_id,
-    name: name,
-    country: country_id,
-    country_name: country_name
-}
+| Key | Value |
+| ------------- | ------------- |
+| id | Product's ID |
+| image_url | Url to product's picture |
+| name | Product's name |
+| country_id | Country id that the product is sold in |
+| country_name | Country name that the product is sold in |
 
-GET http://localhost:8080/api/products/search/:search
+GET http://localhost:8080/api/products/:searchString
 
-Returns a list of all products that start with the search parameter.
+Returns a list of all products that begin with the searchString parameter.
 
-{
-    id: product_id,
-    name: name,
-    country: country_id,
-    country_name: country_name
-}
-
-GET http://localhost:8080/api/products/popular
-
-Returns a list of the 9 items with the most views.
-
-{
-    id: product_id,
-    name: name,
-    country: country_id,
-    country_name: country_name
-}
+| Key | Value |
+| ------------- | ------------- |
+| id | Product's ID |
+| image_url | Url to product's picture |
+| name | Product's name |
+| country_id | Country id that the product is sold in |
+| country_name | Country name that the product is sold in |
 
 GET http://localhost:8080/api/products/discover
 
-Returns a list of 9 random items
+Returns a list of 9 random products.
 
-{
-    id: product_id,
-    name: name,
-    country: country_id,
-    country_name: country_name
-}
+| Key | Value |
+| ------------- | ------------- |
+| id | Product's ID |
+| image_url | Url to product's picture |
+| name | Product's name |
+| country_id | Country id that the product is sold in |
+| country_name | Country name that the product is sold in |
+
+GET http://localhost:8080/api/products/popular
+
+Returns a list of the 9 products with the most views.
+
+| Key | Value |
+| ------------- | ------------- |
+| id | Product's ID |
+| image_url | Url to product's picture |
+| name | Product's name |
+| country_id | Country id that the product is sold in |
+| country_name | Country name that the product is sold in |
 
 GET http://localhost:8080/api/message
 
-Returns a list of all conversations that the user is a part of:
+Returns an array of all conversations that the user is a part of:
 
-[{
-    room_id: room id,
-    recipient_id: recipient's id,
-    recipient_first_name: recipient's first name,
-    recipient_last_name: recipient's last name
-}]
+| Key | Value |
+| ------------- | ------------- |
+| room_id | ID of the conversation room the user is a part of |
+| recipient_id | The id of the other conversation participant |
+| recipient_first_name | The first name of the other conversation participant |
+| recipient_last_name | The last of the other conversation participant |
+| recipient_country_name | Country of the other conversation participant |
 
 GET http://localhost:8080/api/message/:roomId
 
 Returns all messages between the user and recipient, sorted by timestamp from earliest to latest:
 
-[{
-    room_id: room_id,
-    from_id: sender's id,
-    from_first_name: sender's_first_name
-    from_last_name: sender's last name
-    to_id: recipient's id,
-    to_first_name: recipient's first name
-    to_last_name: recipient's last name
-    message: contents of the message
-    timestamp: timestamp of the message
-}]
+| Key | Value |
+| ------------- | ------------- |
+| room_id | ID of the conversation room the user is a part of |
+| from_id | Id of the sender |
+| from_first_name | First name of the sender |
+| from_last_name | Last name of the sender |
+| to_id | Id of the recipient |
+| to_first_name | First name of the recipient |
+| to_last_name | Last name of the recipient |
+| message | Contents of the message |
+| timestamp | Timestamp of the message |
 
 POST http://localhost:8080/api/message
 
 Sends a user's message to the server to be sent to the recipient. The body of the data sent to the server will be expecting the following format. If room_id is null, a room will be found and/or created:
 
-{
-    room_id: room id,
-    recipient_id: recipient's user id,
-    message: user's message for the recipient
-}
+| Key | Value |
+| ------------- | ------------- |
+| room_id | ID of the conversation room the user is a part of |
+| recipient_id | Recipient's user id |
+| message | Contents of the message |
 
 The following will be returned upon a successful post:
 
-{
-    room_id: room_id,
-    from_id: sender's id,
-    from_first_name: sender's_first_name
-    from_last_name: sender's last name
-    to_id: recipient's id,
-    to_first_name: recipient's first name
-    to_last_name: recipient's last name
-    message: contents of the message
-    timestamp: timestamp of the message
-}
+| Key | Value |
+| ------------- | ------------- |
+| room_id | ID of the conversation room the user is a part of |
+| from_id | Id of the sender |
+| from_first_name | First name of the sender |
+| from_last_name | Last name of the sender |
+| to_id | Id of the recipient |
+| to_first_name | First name of the recipient |
+| to_last_name | Last name of the recipient |
+| message | Contents of the message |
+| timestamp | Timestamp of the message |
 
 ### Auth
 
-Authentication and authorization will be implemented through Passport.js's, authentication methods. The minimum necessary will be an Email and Password. If there is time, authentication through Google Account, Facebook Account and/or Apple Account will be implemented.
+Current supported authentication method is through web token and Google OAuth.
+
 
 ## Roadmap
-
-Scope your project as a sprint. Break down the tasks that will need to be completed and map out timeframes for implementation. Think about what you can reasonably complete before the due date. The more detail you provide, the easier it will be to build.
 
 January 19 - 22: Complete development and testing api requests.
 January 22 - 25: Complete development of components and styling of front end.
