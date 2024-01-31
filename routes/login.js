@@ -2,7 +2,6 @@ const router = require('express').Router();
 const controller = require('../controller/login-controller');
 const knex = require("knex")(require("../knexfile"))
 const jwt = require('jsonwebtoken')
-const morgan = require('morgan');
 const {google} = require("googleapis");
 require('dotenv').config()
 const {v4: uuidv4} = require('uuid')

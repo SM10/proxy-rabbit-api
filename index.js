@@ -8,9 +8,6 @@ const countriesRouter = require('./routes/countries')
 const productsRouter = require('./routes/products')
 const messageRouter = require('./routes/message')
 require('dotenv').config()
-const {v4: uuid} = require('uuid')
-const logger = require('morgan');
-const crypto = require('crypto');
 const knex = require('knex')(require('./knexfile'))
 const session = require("express-session");
 const jwt = require('jsonwebtoken')
