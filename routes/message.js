@@ -49,7 +49,7 @@ router.route('/').get(controller.getConvoList)
             message: req.body.message
         })
     
-        const postedMessage = await knex("messages").where("room_id", "=", roomCheck[0].room_id)
+        const postedMessage = await knex("messages").where("room_id", "=", roomObject.room_id)
         .join("user as from", function(){
             this.on("from.id", "=", "messages.from")
         }).join("user as to", function(){
