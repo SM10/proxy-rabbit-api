@@ -46,6 +46,7 @@ router.route("/google/callback").get(async (req, res) =>{
                 crypto.pbkdf2(uuidv4(), salt, 31000, 32, "sha256", async function (err, hashedPassword){
                     if(err) return next(err);
                     try{
+                        console.log(response.data.family_name)
                         const ln = response.data.family_name ? response.data.family_name : ' ';
                         await knex("user").insert({
                             id: uuidv4(),
