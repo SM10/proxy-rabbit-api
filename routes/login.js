@@ -50,7 +50,7 @@ router.route("/google/callback").get(async (req, res) =>{
                             id: uuidv4(),
                             email: email,
                             first_name: response.data.given_name,
-                            last_name: response.data.family_name,
+                            last_name: response.data.family_name ? response.data.family_name : '',
                             hashed_password: hashedPassword,
                             country_id: countries[0].id,
                             salt: salt
