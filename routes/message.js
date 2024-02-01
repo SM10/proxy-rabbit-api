@@ -66,6 +66,7 @@ router.route('/').get(controller.getConvoList)
         req.io.to(roomObject.room_id).emit("message", postedMessage)
         res.status(202).json(postedMessage);
     }catch(error){
+        console.log(error)
         res.status(402).send(error)
     }
     });
