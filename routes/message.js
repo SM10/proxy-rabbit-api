@@ -49,7 +49,7 @@ router.route('/').get(controller.getConvoList)
             message: req.body.message
         })
     
-        const postedMessage = await knex("messages").where("messages.id", "=", idArray[0])
+        const postedMessage = await knex("messages")
         .join("user as from", function(){
             this.on("from.id", "=", "messages.from")
         }).join("user as to", function(){
@@ -62,9 +62,9 @@ router.route('/').get(controller.getConvoList)
         "to.first_name AS to_first_name", 
         "to.last_name AS to_last_name",
         "messages.message AS message",
-        "messages.timestamp AS timestamp");
-        req.io.to(roomObject.room_id).emit("message", postedMessage[0])
-        res.status(202).send(postedMessage[0]);
+        "messages.timestamp AS timestamp").orderBy("messages.timestamp", "desc");
+        req.io.to(roomObject.room_id).emit("message", postedMessage)
+        res.status(202).json(postedMessage);
     }catch(error){
         res.status(402).send(error)
     }
