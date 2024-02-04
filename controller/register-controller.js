@@ -18,9 +18,8 @@ const registerUser = (request, response)=>{
         });
         response.status(201).send("Registration successful")
         }catch(error){
-            return response.status(400).send(`Failed to register user. ${error.message}`)
+            return response.status(400).send(`Failed to register user. Email already exists`)
         }
-        
     })
 }
 module.exports = {registerUser}
